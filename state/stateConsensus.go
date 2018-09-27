@@ -2285,11 +2285,13 @@ func (s *State) GetF(rt bool, adr [32]byte) (v int64) {
 }
 
 // PutF()
-// If rt == true, update the Temp balances.  Otherwise update the Permenent balances.
+// If rt == true, update the Temp balances.  Otherwise update the Permanant balances.
 // concurrency safe to call
 func (s *State) PutF(rt bool, adr [32]byte, v int64) {
-	if s.validatorLoopThreadID != atomic.Goid() {
-		panic("Second thread writing the factoids")
+	// REVIEW: why is this empty sometimes?
+	if s.validatorLoopThreadID != "" && s.validatorLoopThreadID != atomic.Goid() {
+		//panic(fmt.Sprintf("Second thread writing the factoids '%v' & '%v'", s.validatorLoopThreadID, atomic.Goid()))
+		s.LogPrintf("Second thread writing the factoids '%v' & '%v'", s.validatorLoopThreadID, atomic.Goid())
 	}
 	if rt {
 		pl := s.ProcessLists.Get(s.LLeaderHeight)
@@ -2339,8 +2341,9 @@ func (s *State) GetE(rt bool, adr [32]byte) (v int64) {
 // If rt == true, update the Temp balances.  Otherwise update the Permenent balances.
 // concurrency safe to call
 func (s *State) PutE(rt bool, adr [32]byte, v int64) {
-	if s.validatorLoopThreadID != atomic.Goid() {
-		panic("Second thread writing the entrycredits")
+	if s.validatorLoopThreadID != "" && s.validatorLoopThreadID != atomic.Goid() {
+		//panic(fmt.Sprintf("Second thread writing the factoids '%v' & '%v'", s.validatorLoopThreadID, atomic.Goid()))
+		s.LogPrintf("Second thread writing the factoids '%v' & '%v'", s.validatorLoopThreadID, atomic.Goid())
 	}
 	if rt {
 		pl := s.ProcessLists.Get(s.LLeaderHeight)
